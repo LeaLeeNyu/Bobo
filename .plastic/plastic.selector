@@ -1,0 +1,4 @@
+repository "Bobo@ssl://wechat_os_qy0y5dyyjrqn8rr18frudvhee@sh02-plasticscm.unity.cn:8787"
+  path "/"
+    smartbranch "/main/lijingyuan79ljy" 
+     
