@@ -1,0 +1,34 @@
+{
+    "name": "PlayerTest",
+    "maps": [
+        {
+            "name": "BoboOnRoad",
+            "id": "96e28b5d-c7c0-4cc3-8322-9d65187a56fb",
+            "actions": [
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "ff755f43-f67d-4a1f-9c23-6b3455c1720c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ab66e8b8-3324-4f6d-8036-a5020c758529",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
