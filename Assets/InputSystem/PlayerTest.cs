@@ -35,6 +35,15 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Walk"",
+                    ""type"": ""Value"",
+                    ""id"": ""7e12c290-2fdb-41b3-b6ce-106dc3311538"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -48,6 +57,17 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""03ce9ab2-954c-4cab-bf4e-070d804f24cc"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Walk"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -57,6 +77,7 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
         // BoboOnRoad
         m_BoboOnRoad = asset.FindActionMap("BoboOnRoad", throwIfNotFound: true);
         m_BoboOnRoad_Jump = m_BoboOnRoad.FindAction("Jump", throwIfNotFound: true);
+        m_BoboOnRoad_Walk = m_BoboOnRoad.FindAction("Walk", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -117,11 +138,13 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_BoboOnRoad;
     private IBoboOnRoadActions m_BoboOnRoadActionsCallbackInterface;
     private readonly InputAction m_BoboOnRoad_Jump;
+    private readonly InputAction m_BoboOnRoad_Walk;
     public struct BoboOnRoadActions
     {
         private @PlayerTest m_Wrapper;
         public BoboOnRoadActions(@PlayerTest wrapper) { m_Wrapper = wrapper; }
         public InputAction @Jump => m_Wrapper.m_BoboOnRoad_Jump;
+        public InputAction @Walk => m_Wrapper.m_BoboOnRoad_Walk;
         public InputActionMap Get() { return m_Wrapper.m_BoboOnRoad; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -134,6 +157,9 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnJump;
+                @Walk.started -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnWalk;
+                @Walk.performed -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnWalk;
+                @Walk.canceled -= m_Wrapper.m_BoboOnRoadActionsCallbackInterface.OnWalk;
             }
             m_Wrapper.m_BoboOnRoadActionsCallbackInterface = instance;
             if (instance != null)
@@ -141,6 +167,9 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Walk.started += instance.OnWalk;
+                @Walk.performed += instance.OnWalk;
+                @Walk.canceled += instance.OnWalk;
             }
         }
     }
@@ -148,5 +177,6 @@ public partial class @PlayerTest : IInputActionCollection2, IDisposable
     public interface IBoboOnRoadActions
     {
         void OnJump(InputAction.CallbackContext context);
+        void OnWalk(InputAction.CallbackContext context);
     }
 }
