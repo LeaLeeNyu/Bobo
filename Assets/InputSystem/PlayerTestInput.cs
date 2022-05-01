@@ -1,9 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerTestInput : MonoBehaviour
 {
+    public CharacterController controller;
+
+    public float walkSpeed = 5.0f;
+    public Vector2 moveInput;
+    private float xMove;
+    private float zMove;
+
+    private float faceDirection;
+
     public float jumpForce = 5.0f;
     public float jumpFromGroundForce = 2.0f;
     private bool isJump = false;
@@ -20,6 +30,10 @@ public class PlayerTestInput : MonoBehaviour
 
     private int shakeNum = 0;
 
+    private void Awake()
+    {
+
+    }
 
     private void Start()
     {
@@ -29,23 +43,54 @@ public class PlayerTestInput : MonoBehaviour
         boboCollider = GetComponentInParent<CapsuleCollider>();
     }
 
+    private void Update()
+    {
+        //get jump input
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            spacePressed = true;
+        }
+
+        //get walk input
+        xMove = Input.GetAxisRaw("Horizontal");
+        zMove = Input.GetAxisRaw("Vertical");
+        //faceDirection = Input.GetAxisRaw("Horizontal");
+
+
+    }
+
     private void FixedUpdate()
     {
         Jump();
         SwitchAni();
+        Walk();
     }
 
-    public void Spacepress()
+    public void Walk()
     {
-        spacePressed = true;
+        Vector3 walkDirection = new Vector3(xMove, 0f, zMove).normalized;
+
+        if (walkDirection.magnitude >= 0.1f)
+        {
+            boboRB.AddForce(walkDirection * walkSpeed, ForceMode.Impulse);
+
+            // turn the chracter's face direction
+            float targetAngle = Mathf.Atan2(walkDirection.x, walkDirection.z) *Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+        }
+
+        //control the walk function
+        boboAnimator.SetFloat("walking", walkDirection.magnitude);
+
     }
+
 
     //When player press spacebar, bobo will jump
     public void Jump()
     {
         if (spacePressed && !isJump)
         {
-            boboRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            boboRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);           
             isJump = true;
 
             //Control the Ani;
@@ -64,19 +109,26 @@ public class PlayerTestInput : MonoBehaviour
                 boboAnimator.SetBool("jumping", false);
                 boboAnimator.SetBool("falling", true);
             }
-        }
-        //if bobo is not jumping, and she stand on the ground
+        }       
+        //if bobo is not jumping and moving, she stand on the ground and start idle animation
         else if (onGround)
         {
+            spacePressed = false;
+            Debug.Log(spacePressed);
+
             boboAnimator.SetBool("falling", false);
             boboAnimator.SetBool("idle", true);
 
             //spacePressed to balance the time interval between FixUpdate and Update
-            //If put this line of code in jump() and player quickly press the space twice, the bobo will re-jump as soon as it collides with the ground
-            spacePressed = false;
+            //If put this line of code in jump() and player quickly press the space twice, the bobo will re-jump as soon as it collides with the ground            
 
             isJump = false;
         }
+
+        //if bobo is not jumping but moving       
+        //float moveAni = Mathf.Abs(boboRB.velocity.x) + Mathf.Abs(boboRB.velocity.z);
+        //boboAnimator.SetFloat("walking", moveAni);
+
     }
 
 
@@ -116,10 +168,6 @@ public class PlayerTestInput : MonoBehaviour
         isInGround = true;
     }
 
-    public void Walk()
-    {
-
-    }
 
 
 
