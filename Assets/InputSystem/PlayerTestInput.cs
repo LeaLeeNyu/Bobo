@@ -5,28 +5,34 @@ using UnityEngine.InputSystem;
 
 public class PlayerTestInput : MonoBehaviour
 {
-    public CharacterController controller;
+    //public CharacterController controller;
+    public Transform cameraTrans;
 
+    //movement  
     public float walkSpeed = 5.0f;
     public Vector2 moveInput;
     private float xMove;
     private float zMove;
+    //Smooth the movement when player trun direction
+    public float turnSmoothTime = 0.1f;
+    private float turnSmoothVelocity;
 
-    private float faceDirection;
-
+    //jump 
     public float jumpForce = 5.0f;
     public float jumpFromGroundForce = 2.0f;
     private bool isJump = false;
     private bool onGround;
     public bool spacePressed = false;
-
     public bool isInGround = true;
+
+    //timer
+    float currentTime;
+    float startingTime;
 
     private Rigidbody boboRB;
     public Animator boboAnimator;
     private MeshCollider headCollider;
     private CapsuleCollider boboCollider;
-
 
     private int shakeNum = 0;
 
@@ -72,14 +78,18 @@ public class PlayerTestInput : MonoBehaviour
 
         if (walkDirection.magnitude >= 0.1f)
         {
-            boboRB.AddForce(walkDirection * walkSpeed *Time.deltaTime, ForceMode.Impulse);
-
             // turn the chracter's face direction
-            float targetAngle = Mathf.Atan2(walkDirection.x, walkDirection.z) *Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+            float targetAngle = Mathf.Atan2(walkDirection.x, walkDirection.z) * Mathf.Rad2Deg + cameraTrans.eulerAngles.y;
+            //smooth the rotation
+            //the rotation angle should also calculate camera rotation angle
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+            Vector3 turnDir = Quaternion.Euler(0f, targetAngle, 0f)*Vector3.forward;
+            boboRB.AddForce(turnDir.normalized * walkSpeed * Time.deltaTime, ForceMode.Impulse);
         }
 
-        //control the walk function
+        //control the walk animation
         boboAnimator.SetFloat("walking", walkDirection.magnitude);
 
     }
