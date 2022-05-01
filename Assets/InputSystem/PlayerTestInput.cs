@@ -72,7 +72,7 @@ public class PlayerTestInput : MonoBehaviour
 
         if (walkDirection.magnitude >= 0.1f)
         {
-            boboRB.AddForce(walkDirection * walkSpeed, ForceMode.Impulse);
+            boboRB.AddForce(walkDirection * walkSpeed *Time.deltaTime, ForceMode.Impulse);
 
             // turn the chracter's face direction
             float targetAngle = Mathf.Atan2(walkDirection.x, walkDirection.z) *Mathf.Rad2Deg;
