@@ -26,8 +26,14 @@ public class PlayerTestInput : MonoBehaviour
     public bool isInGround = true;
 
     //timer
-    float currentTime;
-    float startingTime;
+    private FunctionTimer witherTimer;
+    public float witherTime = 5f;
+    private bool startWither = false;
+    //leaf color
+    public Material leafColor;
+    private SkinnedMeshRenderer boboRander;
+    public Color yellowLeaf;
+    public Color greenLeaf;
 
     private Rigidbody boboRB;
     public Animator boboAnimator;
@@ -47,6 +53,17 @@ public class PlayerTestInput : MonoBehaviour
         boboAnimator = GetComponent<Animator>();
         headCollider = GetComponentInParent<MeshCollider>();
         boboCollider = GetComponentInParent<CapsuleCollider>();
+
+        //timer
+        witherTimer = new FunctionTimer(Wither, witherTime);
+
+        //Material Rander
+        //boboRander = GetComponentInChildren<SkinnedMeshRenderer>();
+    }
+
+    private void Wither()
+    {
+        Debug.Log("Bobo died");
     }
 
     private void Update()
@@ -60,9 +77,15 @@ public class PlayerTestInput : MonoBehaviour
         //get walk input
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
-        //faceDirection = Input.GetAxisRaw("Horizontal");
 
-
+        //update the timer
+        if (startWither)
+        {
+            witherTimer.UpdateTimer();
+            //Debug.Log(witherTimer.timer);
+            float colorTime = Map(witherTimer.timer, 0f, witherTime, 1f, 0f);
+            leafColor.color = Color.Lerp(greenLeaf, yellowLeaf, colorTime);
+        }
     }
 
     private void FixedUpdate()
@@ -71,6 +94,24 @@ public class PlayerTestInput : MonoBehaviour
         SwitchAni();
         Walk();
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            onGround = true;
+
+            //stop the timer and reset the time
+            startWither = false;
+            witherTimer.ResetSelf(witherTime);
+            leafColor.color = greenLeaf;
+        }
+        else
+        {
+            startWither = true;
+        }
+    }
+
 
     public void Walk()
     {
@@ -124,14 +165,13 @@ public class PlayerTestInput : MonoBehaviour
         else if (onGround)
         {
             spacePressed = false;
-            Debug.Log(spacePressed);
+            //Debug.Log(spacePressed);
 
             boboAnimator.SetBool("falling", false);
             boboAnimator.SetBool("idle", true);
 
             //spacePressed to balance the time interval between FixUpdate and Update
             //If put this line of code in jump() and player quickly press the space twice, the bobo will re-jump as soon as it collides with the ground            
-
             isJump = false;
         }
 
@@ -139,15 +179,6 @@ public class PlayerTestInput : MonoBehaviour
         //float moveAni = Mathf.Abs(boboRB.velocity.x) + Mathf.Abs(boboRB.velocity.z);
         //boboAnimator.SetFloat("walking", moveAni);
 
-    }
-
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.tag == "Ground")
-        {
-            onGround = true;
-        }
     }
 
 
@@ -178,8 +209,8 @@ public class PlayerTestInput : MonoBehaviour
         isInGround = true;
     }
 
-
-
-
-
+    public float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
+    {
+        return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+    }
 }
