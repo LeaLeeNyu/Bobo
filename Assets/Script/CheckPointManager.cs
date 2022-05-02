@@ -6,6 +6,14 @@ public class CheckPointManager : MonoBehaviour
 {
     private void Awake()
     {
-        //Tran
+        //Find all the checkpoint in the children
+        Transform checkpointsTransform = transform.Find("CheckPoint");
+
+        foreach(Transform checkpointTransform in checkpointsTransform)
+        {
+            
+        }
+
+
     }
 }
