@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6334826296790823781}
   - component: {fileID: 6937242589704371392}
   - component: {fileID: 5161967573660256266}
+  - component: {fileID: 7456166312199712017}
   m_Layer: 3
   m_Name: Dirt1
   m_TagString: Ground
@@ -25,9 +26,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6674900176923355615}
-  m_LocalRotation: {x: -0.00000010331601, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 12.829144, y: -7.139102, z: -7.7972755}
-  m_LocalScale: {x: 0.5170313, y: 0.5170313, z: 0.5170313}
+  m_LocalScale: {x: 0.30908135, y: 0.30908132, z: 0.30908135}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -81,3 +82,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &7456166312199712017
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6674900176923355615}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 6065224391585402365, guid: 252694c4ff00d564b8f823e6a1fc51a0, type: 3}

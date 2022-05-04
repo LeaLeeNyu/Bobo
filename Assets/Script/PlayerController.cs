@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -128,6 +129,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Garden")
+        {
+            SceneManager.LoadScene("MissAccoplished");
+        }
+    }
+
 
     public void Walk()
     {
@@ -143,7 +152,7 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
             Vector3 turnDir = Quaternion.Euler(0f, targetAngle, 0f)*Vector3.forward;
-            boboRB.AddForce(turnDir.normalized * walkSpeed * Time.deltaTime, ForceMode.Impulse);
+            boboRB.AddForce(turnDir.normalized * walkSpeed);
         }
 
         //control the walk animation
@@ -214,6 +223,8 @@ public class PlayerController : MonoBehaviour
         died = false;
         //Ani
         boboAnimator.SetBool("died", false);
+        //Leaf color
+        leafColor.color = greenLeaf;
 
     }
 
