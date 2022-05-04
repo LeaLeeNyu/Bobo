@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CheckingPoint : MonoBehaviour
 {
-    private CheckPointManager checkPointManager;
     public Vector3 checkPointPos;
 
     private void Awake()
@@ -12,27 +11,13 @@ public class CheckingPoint : MonoBehaviour
         checkPointPos = gameObject.transform.position;
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if(other.tag == "Player")
-    //    {
-    //        //if player pass through this checkpoint, pass to the checkpoint manager
-    //        checkPointManager.PlayerThorughCheckpoint(this);
-    //    }
-    //}
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            //if player pass through this checkpoint, pass to the checkpoint manager
-            checkPointManager.PlayerThorughCheckpoint(this);
+            //If player arrive at this check point, next time player died, they will reborn at this check point
+            SaveSystem.SavePlayer(this);
         }
-    }
-
-    public void SetCheckpointManager(CheckPointManager checkPointManager)
-    {
-        this.checkPointManager = checkPointManager;
     }
 
 

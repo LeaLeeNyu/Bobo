@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     private MeshCollider headCollider;
     private CapsuleCollider boboCollider;
 
-    private int shakeNum = 0;
+    //private int shakeNum = 0;
 
     private void Awake()
     {
@@ -63,19 +63,14 @@ public class PlayerController : MonoBehaviour
         //boboRander = GetComponentInChildren<SkinnedMeshRenderer>();
     }
 
-    private void Wither()
-    {
-        Debug.Log("Bobo died");
-        boboAnimator.SetBool("died", true);
-        died = true;
-    }
-
     private void Update()
     {
+        //SwitchAni();
+
         //get jump input
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            spacePressed = true;
+            spacePressed = true;            
         }
 
         //get walk input
@@ -90,24 +85,31 @@ public class PlayerController : MonoBehaviour
             float colorTime = Map(witherTimer.timer, 0f, witherTime, 1f, 0f);
             leafColor.color = Color.Lerp(greenLeaf, yellowLeaf, colorTime);
         }
+
+        if (died)
+        {
+            StartCoroutine(RestartCountDown());
+        }
+
     }
 
     private void FixedUpdate()
     {
         if (!died)
         {
-            Jump();
-            SwitchAni();
+            Jump();            
             Walk();
+            SwitchAni();
         }        
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "Ground" && !died)
         {
-            onGround = true;
+            //onGround = true;
 
+            //if bobo collide with the dirt
             //stop the timer and reset the time
             startWither = false;
             witherTimer.ResetSelf(witherTime);
@@ -116,6 +118,13 @@ public class PlayerController : MonoBehaviour
         else
         {
             startWither = true;
+        }
+
+        //if bobo collide with the environment
+        if (collision.gameObject.layer == 3)
+        {
+            //Control the ani
+            onGround = true;
         }
     }
 
@@ -184,35 +193,67 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
-    public void Shake()
+    private void Wither()
     {
-        if (isInGround && boboCollider.isTrigger)
-        {
-            shakeNum += 1;
-            boboAnimator.SetBool("shaking", true);
-            boboAnimator.SetInteger("shakeNum", shakeNum);
-
-            //When player press shake button three times, the bobo will jump to the ground
-            if (shakeNum == 3)
-            {
-                boboRB.AddForce(Vector3.up * jumpFromGroundForce);
-                boboAnimator.SetBool("jumping", true);
-            }
-        }
-        else
-        {
-            Debug.Log("Is not under the ground!");
-        }
+        Debug.Log("Bobo died");
+        boboAnimator.SetBool("died", true);
+        died = true;
     }
 
-    public void InToGround()
+    private void Restart()
     {
-        boboCollider.isTrigger = true;
-        isInGround = true;
+        PlayerData data = SaveSystem.LoadData();
+
+        Vector3 position;
+        position.x = data.position[0];
+        position.y = transform.position.y;
+        position.z = data.position[2];
+        transform.position = position;
+
+        //Reset all the parameter
+        died = false;
+        //Ani
+        boboAnimator.SetBool("died", false);
+
     }
 
-    public float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
+    IEnumerator RestartCountDown()
+    {
+        yield return new WaitForSeconds(3);
+        Restart();
+    }
+
+
+        //This function relate to the stealth gameplay. could change to state manager, still developing
+        //public void Shake()
+        //{
+        //    if (isInGround && boboCollider.isTrigger)
+        //    {
+        //        shakeNum += 1;
+        //        boboAnimator.SetBool("shaking", true);
+        //        boboAnimator.SetInteger("shakeNum", shakeNum);
+
+        //        //When player press shake button three times, the bobo will jump to the ground
+        //        if (shakeNum == 3)
+        //        {
+        //            boboRB.AddForce(Vector3.up * jumpFromGroundForce);
+        //            boboAnimator.SetBool("jumping", true);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("Is not under the ground!");
+        //    }
+        //}
+
+        //public void InToGround()
+        //{
+        //    boboCollider.isTrigger = true;
+        //    isInGround = true;
+        //}
+
+        //Map value function
+        public float Map(float value, float fromSource, float toSource, float fromTarget, float toTarget)
     {
         return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
     }

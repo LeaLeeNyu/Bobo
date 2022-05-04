@@ -7,10 +7,12 @@ public class PlayerData
 {
     public float[] position;
 
-    public PlayerData(CheckPointManager checkPointManager)
+    public PlayerData(CheckingPoint checkPoint)
     {
-        //position[0] = playerController.transform.position.x;
-        //position[1] = playerController.transform.position.y;
-        //position[2] = playerController.transform.position.z;
+        position = new float[3];
+
+        position[0] = checkPoint.checkPointPos.x;
+        position[1] = checkPoint.checkPointPos.y;
+        position[2] = checkPoint.checkPointPos.z;
     }
 }

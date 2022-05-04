@@ -9,7 +9,7 @@ public static class SaveSystem
 {
 
     //make SavePlayer static to call it from anywhere
-    public static void SavePlayer(CheckPointManager checkPointManager)
+    public static void SavePlayer(CheckingPoint checkPoint)
     {
         //Serializes in binary format
         BinaryFormatter formatter = new BinaryFormatter();
@@ -19,7 +19,7 @@ public static class SaveSystem
         FileStream stream = new FileStream(path, FileMode.Create);
 
         //write the data in the file in binary format
-        PlayerData data = new PlayerData(checkPointManager);
+        PlayerData data = new PlayerData(checkPoint);
         formatter.Serialize(stream, data);
 
         //End writing or reading behaviour
