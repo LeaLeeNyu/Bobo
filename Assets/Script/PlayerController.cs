@@ -86,6 +86,8 @@ public class PlayerController : MonoBehaviour
         {
             witherTimer.UpdateTimer();
             //Debug.Log(witherTimer.timer);
+
+            //change leaves color by time
             float colorTime = Map(witherTimer.timer, 0f, witherTime, 1f, 0f);
             leafColor.color = Color.Lerp(greenLeaf, yellowLeaf, colorTime);
         }
@@ -130,6 +132,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        //for checkPoint
+         if (collision.gameObject.tag == "Ground" && !died)
+        {
+            startWither = false;
+            witherTimer.ResetSelf(witherTime);
+            leafColor.color = greenLeaf;
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Garden")
@@ -137,12 +150,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene("MissAccoplished");
         }
         //for checkPoint
-        else if (other.gameObject.tag == "Ground" && !died)
-        {
-            startWither = false;
-            witherTimer.ResetSelf(witherTime);
-            leafColor.color = greenLeaf;
-        }
+        
     }
 
 
@@ -235,12 +243,6 @@ public class PlayerController : MonoBehaviour
 
     private void Restart()
     {
-        //Reset all the parameter
-        died = false;
-        //Ani
-        boboAnimator.SetBool("died", false);
-        //Leaf color
-        leafColor.color = greenLeaf;
 
         PlayerData data = SaveSystem.LoadData();
 
@@ -248,14 +250,25 @@ public class PlayerController : MonoBehaviour
         position.x = data.position[0];
         position.y = data.position[1];
         position.z = data.position[2];
-        transform.position = position;        
+        transform.position = position;
 
+        //Ani
+        boboAnimator.SetBool("died", false);
+          
     }
 
     IEnumerator RestartCountDown()
     {
-        int aniLayerIndex = boboAnimator.GetLayerIndex("Base Layer");
-        yield return new WaitForSeconds(boboAnimator.GetCurrentAnimatorClipInfo(aniLayerIndex).Length);
+        //Reset all the parameter
+        died = false;
+
+        //int aniLayerIndex = boboAnimator.GetLayerIndex("Base Layer");
+        //Debug.Log(boboAnimator.GetCurrentAnimatorClipInfo(aniLayerIndex).Length);
+        yield return new WaitForSeconds(1f);
+
+        //Leaf color
+        leafColor.color = greenLeaf;
+
         Restart();
     }
 
