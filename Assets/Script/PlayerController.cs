@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     //jump 
     public float jumpForce = 5.0f;
+    public float jumpHeight = 2.0f;
     public float jumpFromGroundForce = 2.0f;
     private bool isJump = false;
     private bool onGround;
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private bool died = false;
 
     private Rigidbody boboRB;
+    private CharacterController boboController;
     public Animator boboAnimator;
     private MeshCollider headCollider;
     private CapsuleCollider boboCollider;
@@ -56,6 +58,7 @@ public class PlayerController : MonoBehaviour
         boboAnimator = GetComponent<Animator>();
         headCollider = GetComponentInParent<MeshCollider>();
         boboCollider = GetComponentInParent<CapsuleCollider>();
+        boboController = GetComponent<CharacterController>();
 
         //timer
         witherTimer = new FunctionTimer(Wither, witherTime);
@@ -108,8 +111,6 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground" && !died)
         {
-            //onGround = true;
-
             //if bobo collide with the dirt
             //stop the timer and reset the time
             startWither = false;
@@ -135,6 +136,13 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene("MissAccoplished");
         }
+        //for checkPoint
+        else if (other.gameObject.tag == "Ground" && !died)
+        {
+            startWither = false;
+            witherTimer.ResetSelf(witherTime);
+            leafColor.color = greenLeaf;
+        }
     }
 
 
@@ -152,7 +160,9 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
             Vector3 turnDir = Quaternion.Euler(0f, targetAngle, 0f)*Vector3.forward;
-            boboRB.AddForce(turnDir.normalized * walkSpeed);
+
+            boboRB.velocity = new Vector3(turnDir.normalized.x * walkSpeed, boboRB.velocity.y, turnDir.normalized.z * walkSpeed);
+            //(turnDir.normalized * walkSpeed);
         }
 
         //control the walk animation
@@ -164,15 +174,29 @@ public class PlayerController : MonoBehaviour
     //When player press spacebar, bobo will jump
     public void Jump()
     {
+        //if (spacePressed && !isJump)
+        //{
+        //    boboRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);           
+        //    isJump = true;
+
+        //    //Control the Ani;
+        //    boboAnimator.SetBool("jumping", true);
+        //    boboAnimator.SetBool("idle", false);
+        //}
+
+        //Karina's jump code
         if (spacePressed && !isJump)
         {
-            boboRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);           
+            boboRB.velocity = new Vector3(boboRB.velocity.x, jumpHeight);
             isJump = true;
 
-            //Control the Ani;
             boboAnimator.SetBool("jumping", true);
             boboAnimator.SetBool("idle", false);
-        }       
+        }
+        else if (!spacePressed && isJump)
+        {
+            boboRB.velocity += Vector3.up * Physics.gravity.y * (jumpHeight - 1f);
+        }
     }
 
     private void SwitchAni()
@@ -211,14 +235,6 @@ public class PlayerController : MonoBehaviour
 
     private void Restart()
     {
-        PlayerData data = SaveSystem.LoadData();
-
-        Vector3 position;
-        position.x = data.position[0];
-        position.y = transform.position.y;
-        position.z = data.position[2];
-        transform.position = position;
-
         //Reset all the parameter
         died = false;
         //Ani
@@ -226,11 +242,20 @@ public class PlayerController : MonoBehaviour
         //Leaf color
         leafColor.color = greenLeaf;
 
+        PlayerData data = SaveSystem.LoadData();
+
+        Vector3 position;
+        position.x = data.position[0];
+        position.y = data.position[1];
+        position.z = data.position[2];
+        transform.position = position;        
+
     }
 
     IEnumerator RestartCountDown()
     {
-        yield return new WaitForSeconds(3);
+        int aniLayerIndex = boboAnimator.GetLayerIndex("Base Layer");
+        yield return new WaitForSeconds(boboAnimator.GetCurrentAnimatorClipInfo(aniLayerIndex).Length);
         Restart();
     }
 
