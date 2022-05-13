@@ -26,6 +26,10 @@ public class CameraLook : MonoBehaviour
     float rotationX;
     float rotationY;
 
+    //Dialogue Trigger
+    public Dialogue friendDialogue;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -58,11 +62,6 @@ public class CameraLook : MonoBehaviour
                 if (heldObj.name == hitter.collider.gameObject.name)
                 {
                     Debug.Log("cursor on held object");
-                   // float xRotate = Input.GetAxis("Mouse X") * rotateSpeed;
-                   // float yRotate = Input.GetAxis("Mouse Y") * rotateSpeed;
-
-                    //heldObj.transform.Rotate(Vector3.down, xRotate);
-                   // heldObj.transform.Rotate(Vector3.right, yRotate);
                 }
             }
 
@@ -76,6 +75,12 @@ public class CameraLook : MonoBehaviour
                 {
                     PickUpObject(hitter.collider.gameObject, objOriginalPos);
                 }              
+            }else if(hitter.collider.gameObject.tag == "Friend")
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    TriggerDialogue(friendDialogue);
+                }
             }
         }
 
@@ -84,8 +89,6 @@ public class CameraLook : MonoBehaviour
             //Debug.Log("drop");
             DropObject();
         }
-
-        //MoveCamera();
     }
     void PickUpObject(GameObject obj,Vector3 objOriginalPos)
     {
@@ -110,19 +113,11 @@ public class CameraLook : MonoBehaviour
         heldObj = null;
     }
 
-    void MoveCamera()
+    //Dialogue Trigger
+    public void TriggerDialogue(Dialogue dialogue)
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        //why add Time.deltaTime?
-        //make the movement smooth
-        rotationX += mouseY * mouseSense * Time.deltaTime;
-        rotationY += mouseX * mouseSense * Time.deltaTime;
-
-        rotationX = Mathf.Clamp(rotationX, -clampAngle, clampAngle);
-
-        Quaternion newRotation = Quaternion.Euler(rotationX, rotationY, 0.0f);
-        transform.rotation = newRotation;
+        //start the first line of the dialogue
+        FindObjectOfType<DialogueSystem>().StartDialogue(dialogue);
     }
+
 }
