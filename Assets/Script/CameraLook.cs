@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraLook : MonoBehaviour
 {
-    public float sphereRadius = 0.1f;
-
     // The offset of grabed object
     [SerializeField] private float zOffset = 3f;
     [SerializeField] private float xOffset = 0f;
@@ -17,17 +15,9 @@ public class CameraLook : MonoBehaviour
     Vector3 objOriginalPos;
     Camera cameraM;
 
-    //Roate camera 
-    public float rotateSpeed = 5f;
-
-    //Camera Rotate
-    public float mouseSense = 0.5f;
-    public float clampAngle = 80f;
-    float rotationX;
-    float rotationY;
-
     //Dialogue Trigger
     public Dialogue friendDialogue;
+    public static bool friendIsHit = false;
 
 
     // Start is called before the first frame update
@@ -36,8 +26,6 @@ public class CameraLook : MonoBehaviour
         cameraM = GetComponent<Camera>();
 
         Vector3 startRot = transform.localRotation.eulerAngles;
-        rotationX = startRot.x;
-        rotationY = startRot.y;
     }
 
     // Update is called once per frame
@@ -53,7 +41,7 @@ public class CameraLook : MonoBehaviour
         if (Physics.Raycast(cameraM.transform.position, cameraM.transform.forward, out hitter,range))
         {
             //Debug.Log("hit something!");
-            Debug.Log(hitter.collider.gameObject.name);
+            //Debug.Log(hitter.collider.gameObject.name);
 
             //if I held some obj
             if (heldObj != null)
@@ -77,10 +65,17 @@ public class CameraLook : MonoBehaviour
                 }              
             }else if(hitter.collider.gameObject.tag == "Friend")
             {
+                friendIsHit = true;
+
                 if (Input.GetMouseButtonDown(0))
                 {
                     TriggerDialogue(friendDialogue);
                 }
+            }
+            //reset all the parameter
+            else
+            {
+                friendIsHit = false;
             }
         }
 
@@ -94,7 +89,7 @@ public class CameraLook : MonoBehaviour
     {
         heldObj = obj;
         objOriginalPos = obj.transform.position;
-        Debug.Log(objOriginalPos);
+        //Debug.Log(objOriginalPos);
 
         //for rotate the object when it was chosen
         //obj.transform.SetParent(gameObject.transform);
