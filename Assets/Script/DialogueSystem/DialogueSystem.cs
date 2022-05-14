@@ -65,7 +65,7 @@ public class DialogueSystem : MonoBehaviour
             sentences.Enqueue(sentence);
         }
 
-       // DisplayNextSentence();
+        DisplayNextSentence();
 
     }
 

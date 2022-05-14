@@ -67,7 +67,7 @@ public class CameraLook : MonoBehaviour
             {
                 friendIsHit = true;
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && DialogueSystem.noDialogue)
                 {
                     TriggerDialogue(friendDialogue);
                 }
