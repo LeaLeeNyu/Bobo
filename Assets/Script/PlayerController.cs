@@ -45,15 +45,22 @@ public class PlayerController : MonoBehaviour
     private MeshCollider headCollider;
     private CapsuleCollider boboCollider;
 
+    public static bool gameIsEnd;
+    public GameObject startPoint;
+    private CheckingPoint startCheckPoint;
+
     //private int shakeNum = 0;
 
     private void Awake()
     {
-
+        startPoint = GameObject.Find("StartPoint");
+        startCheckPoint = startPoint.GetComponent<CheckingPoint>();
     }
 
     private void Start()
     {
+        SaveSystem.SavePlayer(startCheckPoint);
+
         boboRB = GetComponentInParent<Rigidbody>();
         boboAnimator = GetComponent<Animator>();
         headCollider = GetComponentInParent<MeshCollider>();
@@ -72,7 +79,7 @@ public class PlayerController : MonoBehaviour
         //SwitchAni();
 
         //get jump input
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&& DialogueSystem.noDialogue)
         {
             spacePressed = true;            
         }
@@ -101,7 +108,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!died)
+        if (!died && DialogueSystem.noDialogue)
         {
             Jump();            
             Walk();
@@ -147,6 +154,7 @@ public class PlayerController : MonoBehaviour
     {
         if(other.tag == "Garden")
         {
+            gameIsEnd = true;
             SceneManager.LoadScene("MissAccoplished");
         }
         //for checkPoint
@@ -254,20 +262,23 @@ public class PlayerController : MonoBehaviour
 
         //Ani
         boboAnimator.SetBool("died", false);
-          
+        //Leaf color
+        leafColor.color = greenLeaf;
+        //died
+        died = false;
+
     }
 
     IEnumerator RestartCountDown()
     {
         //Reset all the parameter
-        died = false;
 
         //int aniLayerIndex = boboAnimator.GetLayerIndex("Base Layer");
         //Debug.Log(boboAnimator.GetCurrentAnimatorClipInfo(aniLayerIndex).Length);
         yield return new WaitForSeconds(1f);
 
         //Leaf color
-        leafColor.color = greenLeaf;
+        //leafColor.color = greenLeaf;
 
         Restart();
     }

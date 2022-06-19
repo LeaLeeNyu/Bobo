@@ -23,18 +23,18 @@ public class DialogueSystem : MonoBehaviour
 
 
     // make the DialogueSysyem as Singleton, only one instance exist in the scene
-    private void Awake()
-    {
-        if (instance != this & instance != null)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-    }
+    //private void Awake()
+    //{
+    //    if (instance != this & instance != null)
+    //    {
+    //        Destroy(gameObject);
+    //    }
+    //    else
+    //    {
+    //        instance = this;
+    //        DontDestroyOnLoad(gameObject);
+    //    }
+    //}
 
     void Start()
     {
