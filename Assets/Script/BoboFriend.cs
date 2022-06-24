@@ -28,6 +28,6 @@ public class BoboFriend : MonoBehaviour
         Vector3 direction = (Bobo.gameObject.transform.position - gameObject.transform.position).normalized;
         float turnAngle = Mathf.Atan2(direction.x, direction.z)*Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, turnAngle,0f);
-        Debug.Log(transform.rotation);
+        //Debug.Log(transform.rotation);
     }
 }

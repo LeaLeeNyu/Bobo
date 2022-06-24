@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    //public CharacterController controller;
+    //public CharacterController camera;
     public Transform cameraTrans;
 
     //movement  
@@ -31,14 +31,18 @@ public class PlayerController : MonoBehaviour
     private FunctionTimer witherTimer;
     public float witherTime = 5f;
     private bool startWither = false;
-    //leaf color
+
+    //material - leaf color
     public Material leafColor;
     private SkinnedMeshRenderer boboRander;
     public Color yellowLeaf;
     public Color greenLeaf;
 
-    private bool died = false;
+    //bobo died & restart
+    public static bool died = false;
+    //public static bool restart = false;
 
+    //bobo's parameter
     private Rigidbody boboRB;
     private CharacterController boboController;
     public Animator boboAnimator;
@@ -71,13 +75,20 @@ public class PlayerController : MonoBehaviour
         witherTimer = new FunctionTimer(Wither, witherTime);
 
         //Material Rander
-        //boboRander = GetComponentInChildren<SkinnedMeshRenderer>();
+        //boboRander = GetComponentInChildren<SkinnedMeshRenderer>()
+
+
+        Debug.Log(died);
+
+        //if player died & restart
+        if (died)
+        {
+            Restart();
+        }
     }
 
     private void Update()
     {
-        //SwitchAni();
-
         //get jump input
         if (Input.GetKeyDown(KeyCode.Space)&& DialogueSystem.noDialogue)
         {
@@ -88,7 +99,7 @@ public class PlayerController : MonoBehaviour
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
 
-        //update the timer
+        //update the wither timer
         if (startWither)
         {
             witherTimer.UpdateTimer();
@@ -97,11 +108,6 @@ public class PlayerController : MonoBehaviour
             //change leaves color by time
             float colorTime = Map(witherTimer.timer, 0f, witherTime, 1f, 0f);
             leafColor.color = Color.Lerp(greenLeaf, yellowLeaf, colorTime);
-        }
-
-        if (died)
-        {
-            StartCoroutine(RestartCountDown());
         }
 
     }
@@ -242,6 +248,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    // if bobo stand on ground more than x second,
     private void Wither()
     {
         Debug.Log("Bobo died");
@@ -249,9 +256,15 @@ public class PlayerController : MonoBehaviour
         died = true;
     }
 
-    private void Restart()
+    public void RestartSwitchScene()
     {
+        Debug.Log("loading");
+        SceneManager.LoadScene("Loading");
+    }
 
+    //when the bobo restart
+    public void Restart()
+    {
         PlayerData data = SaveSystem.LoadData();
 
         Vector3 position;
@@ -261,26 +274,19 @@ public class PlayerController : MonoBehaviour
         transform.position = position;
 
         //Ani
+        boboAnimator.SetLayerWeight(1, 1f);
         boboAnimator.SetBool("died", false);
         //Leaf color
         leafColor.color = greenLeaf;
         //died
         died = false;
-
     }
 
-    IEnumerator RestartCountDown()
+    //when the restart ani end
+    public void DiedFalse()
     {
-        //Reset all the parameter
-
-        //int aniLayerIndex = boboAnimator.GetLayerIndex("Base Layer");
-        //Debug.Log(boboAnimator.GetCurrentAnimatorClipInfo(aniLayerIndex).Length);
-        yield return new WaitForSeconds(1f);
-
-        //Leaf color
-        //leafColor.color = greenLeaf;
-
-        Restart();
+        //died = false;
+        boboAnimator.SetLayerWeight(1, 0f);
     }
 
 

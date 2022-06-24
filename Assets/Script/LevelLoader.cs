@@ -5,21 +5,29 @@ using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
-    private void Update()
+
+    private void Start()
     {
-        StartCoroutine(LoadingScene("Level0"));
-       
+        //StartCoroutine(DelayTime(5f));
+        StartCoroutine(LoadingScene("Level0"));       
+    }
+
+    IEnumerator DelayTime(float second)
+    {
+        yield return new WaitForSeconds(second);
     }
 
     IEnumerator LoadingScene(string sceneName)
     {
+        yield return new WaitForSeconds(3f);
+        //Load the leavel asynchronous
         AsyncOperation isLoading = SceneManager.LoadSceneAsync(sceneName);
 
         while (!isLoading.isDone)
         {
-            Debug.Log(isLoading.progress);
             yield return null;
         }
-
     }
+
+
 }
